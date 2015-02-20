@@ -1,64 +1,88 @@
 package org.wso2.analytics.dashboardconfig;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
-
 import org.wso2.carbon.user.api.*;
 import org.wso2.carbon.context.*;
 
-// @Consumes(MediaType.APPLICATION_JSON)
-// @Produces(MediaType.APPLICATION_JSON)
+
 @Path("/dashBoardConfigs")
 public class DashboardConf {
 
-	PageMetaBean metaData = new PageMetaBean();
+	/** The logger. */
+	private Log logger = LogFactory.getLog(DashboardConf.class);
+
+	// PageMetaBean metaData = new PageMetaBean();
+	Map<Integer, PageMetaBean> PageMeta = new HashMap<Integer, PageMetaBean>();
 	WidgetBean widget = new WidgetBean();
-	DashboardBean dashboard = new DashboardBean();
+	DashboardBean dashboard = new DashboardBean(); // List of
+												   // Dashboards(Categories)
 	ContentBean content = new ContentBean();
 
+	/* Returns a Json with page meta data for the dashboard:id */
 	@GET
-	@Path("/metadata/")
+	@Path("/metadata/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PageMetaBean getPageMetaData() {
-
-		// PageMetaBean metaData = new PageMetaBean();
-		// metaData.setListElement(0, "tab1");
-		// metaData.setListElement(1, "tab2");
-		// metaData.setListElement(2, "tab3");
-		// metaData.setListElement(3, "tab6");
-		// this.metaData = metaData;
-		return this.metaData; // TODO- add response type return
-	}
-
-	@PUT
-	@Path("/metadata/")
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Consumes("application/json")
-	public Response setPageMetaData(PageMetaBean beans) { // TODO- edit
-														  // thismethod
-
-		System.out.println("Method Accessed from outside url");
-
-		if (beans != null) {
-			// this.metaData=null;
-			this.metaData = beans;
+	public Response getPageMetaData(@PathParam("id") int dashBoardID) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("PageMetaData for Dashboard with ID: " + dashBoardID + " Requested");
 		}
-		return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();
+		try {
+			PageMetaBean metaData = PageMeta.get(dashBoardID);
+			if (metaData == null) {
+//				return Response.noContent().build();// 204
+			}
+			return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();
+		} catch (Exception e) {
+			logger.error(e);
+			return Response.serverError().build();
+		}
 
 	}
 
+	/* Replaces Page meta data of the dashboard:id */
+	@POST
+	@Path("/metadata/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response setPageMetaData(@PathParam("id") int dashBoardID, PageMetaBean metaData) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("PageMetaData for Dashboard with ID: " + dashBoardID + " Requested");
+		}
+
+		if (metaData == null) {
+			logger.debug("Input Data null, content not added or replaced");
+		}
+
+		if (PageMeta.get(dashBoardID) == null) {
+			logger.debug("MetaData added to Map with key: " + dashBoardID);
+		} else {
+			logger.debug("MetaData on Map with key: " + dashBoardID + " Replaced");
+		}
+		PageMeta.put(dashBoardID, metaData);
+
+		return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();
+	}
+
+	/**/
 	@GET
 	@Path("/widget/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -71,11 +95,7 @@ public class DashboardConf {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response setWidget(WidgetBean widget) {
-
-		if (metaData != null) {
-			this.widget = widget;
-		}
-		return Response.ok(widget).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.ok(widget).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@GET
@@ -118,95 +138,60 @@ public class DashboardConf {
 
 	@POST
 	@Path("/login/")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public Response authenticateUser(String input) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response authenticateUser(CredentialsBean credentials) {
 
-		/**
-		 * Server url of the WSO2 Carbon Server
-		 */
+		boolean status = false; // Authentication status TODO: Replace with a
+								// DTO, or an OAuth token
+
+		/* Server url of the WSO2 Carbon Server */
 		String SEVER_URL = "https://localhost:9443/services/";
 
-		/**
-		 * User Name to access WSO2 Carbon Server
-		 */
-		String USER_NAME = "admin";
+		/* User Name to access WSO2 Carbon Server */
+		String username = credentials.getUsername();
 
-		/**
-		 * Password of the User who access the WSO2 Carbon Server
-		 */
-		String PASSWORD = "admin";
+		/*Password of the User who access the WSO2 Carbon Server*/
+		String password = credentials.getPassword();
 
-		/**
-		 * trust store path. this must contains server's certificate.
-		 */
-		String trustStore =
-		                    System.getProperty("user.dir") + File.separator + "repository" + File.separator + "resources" +
-		                            File.separator + "security"+ File.separator+"wso2carbon.jks";
-		
-//		trustStore="/home/dodan/Desktop/svn/user-admin-client/src/main/resources/wso2carbon.jks";
+		/*trust store path. this must contains server's certificate.*/
+//		String trustStore =
+//		                    System.getProperty("user.dir") + File.separator + "repository" +
+//		                            File.separator + "resources" + File.separator + "security" +
+//		                            File.separator + "wso2carbon.jks";
+//
+//		System.setProperty("javax.net.ssl.trustStore", trustStore);
+//
+//		System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
 
-		System.out.println(trustStore);
-		/**
-		 * Call to https://localhost:9443/services/ uses HTTPS protocol.
-		 * Therefore we to validate the server certificate. The server
-		 * certificate is looked up in the
-		 * trust store. Following code sets what trust-store to look for and its
-		 * JKs password.
-		 * Note : The trust store should have server's certificate.
-		 */
-
-		System.setProperty("javax.net.ssl.trustStore", trustStore);
-
-		System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
-
-		/**
-		 * Axis2 configuration context
-		 */
+		/* Axis2 configuration context */
 		ConfigurationContext configContext;
 
 		try {
 
-			/**
-			 * Create a configuration context. A configuration context contains
-			 * information for
-			 * axis2 environment. This is needed to create an axis2 client
+			/*
+			 * configuration context contains information for axis2 environment.
+			 * This is needed to create an axis2 client
 			 */
 			configContext =
 			                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,
 			                                                                                     null);
 
-			/**
-			 * creates UserAdminClient instance
-			 */
+			/* creates UserAdminClient instance */
 			UserAdminClient sampleUserAdminClient = new UserAdminClient(configContext, SEVER_URL);
 
-			/**
-			 * User is authenticate with the WSO2 Carbon Server
-			 */
-			if (sampleUserAdminClient.authenticate(USER_NAME, PASSWORD)) {
-				/**
-				 * When authentication is succeed.
-				 */
+			/* User is authenticate with the WSO2 Carbon Server */
+			if (status = sampleUserAdminClient.authenticate(username, password)) {
+
 				System.out.println("User is successfully authenticated");
 
 				/**
 				 * Do any thing with user admin API. you can list user. add
 				 * users, roles, assignments...
-				 * Here as an example just have implemented list user operation.
 				 */
-				String[] users = sampleUserAdminClient.getAllUserNames();
-
-				if (users != null) {
-					System.out.println("Listing user names of Carbon server...... ");
-					for (String user : users) {
-						System.out.println("User Name : " + user);
-					}
-				}
 
 			} else {
-				/**
-				 * When authentication is failed log error
-				 */
+
+				/* When authentication is failed log error */
 				System.out.println("User can not be authenticated");
 			}
 
@@ -214,6 +199,6 @@ public class DashboardConf {
 			e.printStackTrace();
 		}
 
-		return Response.ok(input).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.ok(status).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 }

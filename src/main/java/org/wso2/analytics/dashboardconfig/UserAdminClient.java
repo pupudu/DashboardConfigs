@@ -19,11 +19,19 @@
 package org.wso2.analytics.dashboardconfig;
 
 
+import java.rmi.RemoteException;
+
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.wso2.carbon.authenticator.stub.AuthenticationAdmin;
+import org.wso2.carbon.authenticator.stub.AuthenticationAdminCallbackHandler;
 import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
+import org.wso2.carbon.authenticator.stub.LoginAuthenticationExceptionException;
+import org.wso2.carbon.authenticator.stub.LoginWithRememberMeOptionAuthenticationExceptionException;
+import org.wso2.carbon.authenticator.stub.LogoutAuthenticationExceptionException;
+import org.wso2.carbon.authenticator.stub.RememberMeData;
 import org.wso2.carbon.user.mgt.stub.UserAdminStub;
 
 /**
@@ -63,18 +71,20 @@ public class UserAdminClient {
 
         String serviceEndPoint;
         AuthenticationAdminStub authStub;
-        String remoteAddress = "SAMPLE_CLIENT";
         boolean authenticate;
-
+        
         serviceEndPoint = serverUrl + "AuthenticationAdmin";
         authStub = new AuthenticationAdminStub(configContext, serviceEndPoint);
         authStub._getServiceClient().getOptions().setManageSession(true);
-        authenticate = authStub.login(userName, password, remoteAddress);
+        authenticate = authStub.login(userName, password, null);
         authCookie = (String) authStub._getServiceClient().getServiceContext().getProperty(
                 HTTPConstants.COOKIE_STRING);
+        
+        
         return authenticate;
     }
 
+   
     /**
      * TODO
      * Method that need to implement get all users defined in Carbon Server

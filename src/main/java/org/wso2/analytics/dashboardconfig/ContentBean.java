@@ -2,12 +2,22 @@ package org.wso2.analytics.dashboardconfig;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Content")
 public class ContentBean {
+	
+	@XmlElement
 	String type;
+	
+	@XmlElement
 	String externalURL;
+	
+	@XmlElement
 	ArrayList<WidgetBean> list = new ArrayList<WidgetBean>();
 
 	public String getType() {

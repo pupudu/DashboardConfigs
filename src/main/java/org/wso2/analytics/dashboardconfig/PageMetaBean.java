@@ -2,11 +2,18 @@ package org.wso2.analytics.dashboardconfig;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "PageMetaBean")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "list" })
+@XmlRootElement
 public class PageMetaBean {
 
+	@XmlElement(name = "list")
 	ArrayList<MetaData> list = new ArrayList<MetaData>();
 
 	public ArrayList<MetaData> getList() {
@@ -25,9 +32,15 @@ public class PageMetaBean {
 	}
 }
 
-@XmlRootElement(name = "internal")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "id" , "title" })
+@XmlRootElement(name = "list")
 class MetaData {
+
+	@XmlElement(name = "id")
 	int id;
+
+	@XmlElement(name = "title")
 	String title;
 
 	public int getId() {

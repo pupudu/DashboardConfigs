@@ -1,12 +1,21 @@
 package org.wso2.analytics.dashboardconfig;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Widget")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class WidgetBean {
-
+	
+	@XmlElement
 	Config config;
+	
+	@XmlElement
 	boolean readOnly;
+	
+	@XmlElement
 	Data data;
 
 	public Config getConfig() {
@@ -49,9 +58,17 @@ public class WidgetBean {
 
 @XmlRootElement(name = "Config")
 class Config {
+	
+	@XmlElement
 	int x;
+	
+	@XmlElement
 	int y;
+	
+	@XmlElement
 	int width;
+	
+	@XmlElement
 	int height;
 
 	public int getX() {

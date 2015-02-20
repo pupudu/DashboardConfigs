@@ -2,11 +2,16 @@ package org.wso2.analytics.dashboardconfig;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Dashboard")
 public class DashboardBean {
 
+	@XmlElement
 	ArrayList<DashboardElement> list = new ArrayList<DashboardElement>();
 
 	public ArrayList<DashboardElement> getList() {
@@ -29,10 +34,17 @@ public class DashboardBean {
 	}
 }
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "internal")
 class DashboardElement {
+	
+	@XmlElement
 	String title;
+	
+	@XmlElement
 	String group;
+	
+	@XmlElement
 	int id;
 
 	public String getTitle() {
