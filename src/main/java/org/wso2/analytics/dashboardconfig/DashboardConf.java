@@ -1,13 +1,11 @@
 package org.wso2.analytics.dashboardconfig;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,9 +16,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
-import org.wso2.carbon.user.api.*;
-import org.wso2.carbon.context.*;
+import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.RegistryType;
+import org.wso2.carbon.registry.api.Registry;
+import org.wso2.carbon.registry.api.RegistryException;
+import org.wso2.carbon.registry.api.Resource;
 
 
 @Path("/dashBoardConfigs")
@@ -44,6 +44,7 @@ public class DashboardConf {
 		if (logger.isDebugEnabled()) {
 			logger.debug("PageMetaData for Dashboard with ID: " + dashBoardID + " Requested");
 		}
+		
 		try {
 			PageMetaBean metaData = PageMeta.get(dashBoardID);
 			if (metaData == null) {
@@ -153,28 +154,16 @@ public class DashboardConf {
 		/*Password of the User who access the WSO2 Carbon Server*/
 		String password = credentials.getPassword();
 
-		/*trust store path. this must contains server's certificate.*/
-//		String trustStore =
-//		                    System.getProperty("user.dir") + File.separator + "repository" +
-//		                            File.separator + "resources" + File.separator + "security" +
-//		                            File.separator + "wso2carbon.jks";
-//
-//		System.setProperty("javax.net.ssl.trustStore", trustStore);
-//
-//		System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
-
-		/* Axis2 configuration context */
-		ConfigurationContext configContext;
-
 		try {
 
 			/*
 			 * configuration context contains information for axis2 environment.
 			 * This is needed to create an axis2 client
 			 */
-			configContext =
+			ConfigurationContext configContext =
 			                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,
 			                                                                                     null);
+		    
 
 			/* creates UserAdminClient instance */
 			UserAdminClient sampleUserAdminClient = new UserAdminClient(configContext, SEVER_URL);
@@ -200,5 +189,21 @@ public class DashboardConf {
 		}
 
 		return Response.ok(status).type(MediaType.APPLICATION_JSON_TYPE).build();
+	}
+	
+	public static void registryAccess(){
+		CarbonContext cctx= CarbonContext.getThreadLocalCarbonContext();
+		Registry registry = cctx.getRegistry(RegistryType.LOCAL_REPOSITORY);
+	
+		
+		try{
+		Resource resource=registry.newResource();
+		resource.setContent("Dashboard_Test");
+		registry.put("RandomPath", resource);
+		System.out.println("Operation Success");
+		}catch(RegistryException re){
+			System.err.println("Registry Exception");
+			re.printStackTrace();
+		}
 	}
 }
