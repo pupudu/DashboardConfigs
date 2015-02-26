@@ -30,6 +30,20 @@ public class PageMetaBean {
 		element.setTitle(title);
 		list.add(element);
 	}
+	public String getElementTitle(int id){
+		return list.get(id).getTitle();
+	}
+	
+//	public void clearAllData(String cause){
+//		if(cause.equals("ConfirmDeletion")){
+//			this.list=null;
+//		}
+//		else{
+//			System.err.println("Invalid Reqest");
+//		}
+//		
+//	}
+	
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)

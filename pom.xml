@@ -74,6 +74,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.wso2.carbon</groupId>
@@ -90,12 +96,9 @@
 
 		<!--Added later for LDAP authentication test <dependency> <groupId>org.wso2.carbon</groupId> 
 			<artifactId>org.wso2.carbon.user.api</artifactId> <version>4.3.0</version> 
-			<scope>provided</scope> </dependency> 
-		<dependency>
-			<groupId>org.wso2.carbon</groupId>
-			<artifactId>org.wso2.carbon.context</artifactId>
-			<version>4.0.1</version>
-		</dependency>-->
+			<scope>provided</scope> </dependency> <dependency> <groupId>org.wso2.carbon</groupId> 
+			<artifactId>org.wso2.carbon.context</artifactId> <version>4.0.1</version> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -123,13 +126,9 @@
 			<version>1.8</version>
 		</dependency>
 
-		<!-- dependencies for carbon context(registry access) 
-		<dependency>
-			<groupId>org.wso2.carbon</groupId>
-			<artifactId>org.wso2.carbon.registry.api</artifactId>
-			<version>4.2.0</version>
-		</dependency>
--->
+		<!-- dependencies for carbon context(registry access) <dependency> <groupId>org.wso2.carbon</groupId> 
+			<artifactId>org.wso2.carbon.registry.api</artifactId> <version>4.2.0</version> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.wso2.carbon</groupId>
 			<artifactId>org.wso2.carbon.registry.core</artifactId>
@@ -137,11 +136,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-	<!-- 	<dependency>
-			<groupId>org.wso2.carbon</groupId>
-			<artifactId>org.wso2.carbon.utils</artifactId>
-			<version>4.1.0</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.wso2.carbon</groupId> <artifactId>org.wso2.carbon.utils</artifactId> 
+			<version>4.1.0</version> </dependency> -->
 
 	</dependencies>
 	<build>

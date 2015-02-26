@@ -3,7 +3,9 @@ package org.wso2.analytics.dashboardconfig;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -22,6 +24,7 @@ import org.wso2.carbon.registry.api.Registry;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.api.Resource;
 
+import com.sun.xml.bind.v2.runtime.Name;
 
 @Path("/dashBoardConfigs")
 public class DashboardConf {
@@ -33,7 +36,7 @@ public class DashboardConf {
 	Map<Integer, PageMetaBean> PageMeta = new HashMap<Integer, PageMetaBean>();
 	WidgetBean widget = new WidgetBean();
 	DashboardBean dashboard = new DashboardBean(); // List of
-												   // Dashboards(Categories)
+	                                               // Dashboards(Categories)
 	ContentBean content = new ContentBean();
 
 	/* Returns a Json with page meta data for the dashboard:id */
@@ -44,13 +47,14 @@ public class DashboardConf {
 		if (logger.isDebugEnabled()) {
 			logger.debug("PageMetaData for Dashboard with ID: " + dashBoardID + " Requested");
 		}
-		
+
 		try {
 			PageMetaBean metaData = PageMeta.get(dashBoardID);
 			if (metaData == null) {
-//				return Response.noContent().build();// 204
+				return Response.noContent().build();// 204
+			} else {
+				return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();	//200
 			}
-			return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 			logger.error(e);
 			return Response.serverError().build();
@@ -81,6 +85,19 @@ public class DashboardConf {
 		PageMeta.put(dashBoardID, metaData);
 
 		return Response.ok(metaData).type(MediaType.APPLICATION_JSON).build();
+	}
+	
+	@DELETE   //TODO- Get superior Advice on this method structure
+	@Path("/metadata/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deletePageMetaElement(@PathParam("id") int dashboardId){
+		
+		if(PageMeta.get(dashboardId)==null){
+			return Response.notModified().build();
+		}else{
+			PageMeta.remove(dashboardId);
+			return Response.ok().build();
+		}
 	}
 
 	/**/
@@ -143,7 +160,7 @@ public class DashboardConf {
 	public Response authenticateUser(CredentialsBean credentials) {
 
 		boolean status = false; // Authentication status TODO: Replace with a
-								// DTO, or an OAuth token
+		                        // DTO, or an OAuth token
 
 		/* Server url of the WSO2 Carbon Server */
 		String SEVER_URL = "https://localhost:9443/services/";
@@ -151,7 +168,7 @@ public class DashboardConf {
 		/* User Name to access WSO2 Carbon Server */
 		String username = credentials.getUsername();
 
-		/*Password of the User who access the WSO2 Carbon Server*/
+		/* Password of the User who access the WSO2 Carbon Server */
 		String password = credentials.getPassword();
 
 		try {
@@ -161,9 +178,8 @@ public class DashboardConf {
 			 * This is needed to create an axis2 client
 			 */
 			ConfigurationContext configContext =
-			                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,
-			                                                                                     null);
-		    
+			                                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,
+			                                                                                                          null);
 
 			/* creates UserAdminClient instance */
 			UserAdminClient sampleUserAdminClient = new UserAdminClient(configContext, SEVER_URL);
@@ -190,18 +206,17 @@ public class DashboardConf {
 
 		return Response.ok(status).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
-	
-	public static void registryAccess(){
-		CarbonContext cctx= CarbonContext.getThreadLocalCarbonContext();
+
+	public static void registryAccess() {
+		CarbonContext cctx = CarbonContext.getThreadLocalCarbonContext();
 		Registry registry = cctx.getRegistry(RegistryType.LOCAL_REPOSITORY);
-	
-		
-		try{
-		Resource resource=registry.newResource();
-		resource.setContent("Dashboard_Test");
-		registry.put("RandomPath", resource);
-		System.out.println("Operation Success");
-		}catch(RegistryException re){
+
+		try {
+			Resource resource = registry.newResource();
+			resource.setContent("Dashboard_Test");
+			registry.put("RandomPath", resource);
+			System.out.println("Operation Success");
+		} catch (RegistryException re) {
 			System.err.println("Registry Exception");
 			re.printStackTrace();
 		}
