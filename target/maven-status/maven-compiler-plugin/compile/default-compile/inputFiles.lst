@@ -1,7 +1,7 @@
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/CredentialsBean.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/UserAdminClient.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/PageMetaBean.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/WidgetBean.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/DashboardConf.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/DashboardBean.java
-/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboardconfig/ContentBean.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/CredentialsBean.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/ContentBean.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/DashboardConf.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/PageMetaBean.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/UserAdminClient.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/WidgetBean.java
+/home/dodan/workspaceK/dashboardConfigs/src/main/java/org/wso2/analytics/dashboard/restapi/DashboardBean.java
